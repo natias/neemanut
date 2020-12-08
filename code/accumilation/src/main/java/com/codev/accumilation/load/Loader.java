@@ -20,6 +20,8 @@ public class Loader {
 	@Autowired
 	KafkaTemplate<String, String> kafkaTemplate;
 
+	
+	
 	public void load(String sql) {
 
 		jdbcTemplate.query(sql, new RowCallbackHandler() {

@@ -1,5 +1,6 @@
 package com.codev.accumilation.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Tnua {
@@ -11,10 +12,11 @@ public class Tnua {
 	String misKartisAshrai6;
 	Number kodChevratAshrai;
 	Number kodAnaf;
-	Number schumChiyuv;
+	BigDecimal schumChiyuv;
 	Number matbeaChiyuv;
 	LocalDate trChiyuv;
 	Number misTashlumNochechi;
+	java.math.BigDecimal misTashlumim;
 	String shemAnaf;
 	Number kodMatbeaIsoMekori;
 	Number schumAmlaTaarif;
@@ -22,7 +24,15 @@ public class Tnua {
 	Number schumHanachaAmla;
 	Number gkKartisMch;
 	Number misKartisAshrai;
-	Number schumTnuaMekori;
+	BigDecimal schumTnuaMekori;
+
+	public java.math.BigDecimal getMisTashlumim() {
+		return misTashlumim;
+	}
+
+	public void setMisTashlumim(java.math.BigDecimal misTashlumim) {
+		this.misTashlumim = misTashlumim;
+	}
 
 	public Integer getNumerator() {
 		return numerator;
@@ -80,11 +90,11 @@ public class Tnua {
 		this.kodAnaf = kodAnaf;
 	}
 
-	public Number getSchumChiyuv() {
+	public BigDecimal getSchumChiyuv() {
 		return schumChiyuv;
 	}
 
-	public void setSchumChiyuv(Number schumChiyuv) {
+	public void setSchumChiyuv(BigDecimal schumChiyuv) {
 		this.schumChiyuv = schumChiyuv;
 	}
 
@@ -168,11 +178,11 @@ public class Tnua {
 		this.misKartisAshrai = misKartisAshrai;
 	}
 
-	public Number getSchumTnuaMekori() {
+	public BigDecimal getSchumTnuaMekori() {
 		return schumTnuaMekori;
 	}
 
-	public void setSchumTnuaMekori(Number schumTnuaMekori) {
+	public void setSchumTnuaMekori(BigDecimal schumTnuaMekori) {
 		this.schumTnuaMekori = schumTnuaMekori;
 	}
 

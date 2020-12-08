@@ -41,6 +41,7 @@ public class TnuaFac {
 
 		tnua.setSchumTnuaMekori(rs.getBigDecimal("SCHUM_TNUA_MEKORI"));
 
+		
 		return tnua;
 	}
 }
