@@ -1,9 +1,13 @@
 package com.codev.accumilation.calculator;
 
+import java.lang.ref.Reference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codev.accumilation.load.TnuaFac;
 import com.codev.accumilation.model.Account;
@@ -17,24 +21,27 @@ import com.codev.accumilation.srvcs.Rules;
 
 public class Calculator {
 
+	@Autowired
 	Cards cards;
 
+	@Autowired
 	Accounts accounts;
 
-	CalculationContext context;
-
+	@Autowired
 	Rules rules;
+
+	CalculationContext context = new CalculationContext();
 
 	public void putTnua(Tnua tnua) {
 
 //DB
-		long accid = accounts.gocAcoountId(tnua.getBank().intValue(), tnua.getSnif().intValue(),
-				tnua.getMch().intValue());
-
-		Account acc = accounts.getAccountById(accid);
+//		long accid = accounts.gocAcoountId(tnua.getBank().intValue(), tnua.getSnif().intValue(),
+//				tnua.getMch().intValue());
+//
+//		Account acc = accounts.getAccountById(accid);
 
 //DB		
-		long cardId = cards.gocCardId(accid, tnua.getMisKartisAshrai().longValue());
+		long cardId = cards.gocCardId( tnua.getMisKartisAshrai().longValue());
 
 		Card card = cards.getCardById(cardId);
 
@@ -66,15 +73,15 @@ public class Calculator {
 
 			CardLevel cardLevel = cards.getCardById(cardNum).getCardLevel();
 
-			BigDecimal accumTotalForNokud = new BigDecimal(0);
+			AtomicReference<BigDecimal> accumTotalForNokud = new AtomicReference(BigDecimal.ZERO);
 
-			BigDecimal accumTotal = new BigDecimal(0);
+			// Reference<BigDecimal> accumTotalForNokud=
+			// BigDecimal accumTotalForNokud = new BigDecimal(0);
+
+			AtomicReference<BigDecimal> accumTotal = new AtomicReference(BigDecimal.ZERO);
+			// BigDecimal = new BigDecimal(0);
 
 			List<Tnua> tnuotForNikud = new ArrayList();
-
-//			List<Tnua> tnuotForNikudPositive = new ArrayList();
-//
-//			List<Tnua> tnuotForNikudBegative = new ArrayList();
 
 			tnuot.forEach(tnua -> {
 
@@ -84,55 +91,56 @@ public class Calculator {
 
 					{
 
-						accumTotal.add(tnua.getSchumChiyuv());
+						accumTotal.set(accumTotal.get().add(tnua.getSchumChiyuv()));
+
 						if (isFirstTashlum(tnua)) {
 
-							accumTotalForNokud.add(tnua.getSchumTnuaMekori());
+							accumTotalForNokud.set(accumTotalForNokud.get().add(tnua.getSchumTnuaMekori()));
 							tnuotForNikud.add(tnua);
 
 						}
 
 					}
 
-					// is not tashlumim
 					else {
-						accumTotal.add(tnua.getSchumChiyuv());
+						accumTotal.set(accumTotal.get().add(tnua.getSchumChiyuv()));
 
-						accumTotalForNokud.add(tnua.getSchumChiyuv());
+						accumTotalForNokud.set(accumTotalForNokud.get().add(tnua.getSchumTnuaMekori()));
 						tnuotForNikud.add(tnua);
 
 					}
-					// accumTotalForNokud.add(augend)
+
+
 				} else {
-					accumTotal.add(tnua.getSchumChiyuv());
+					accumTotal.set(accumTotal.get().add(tnua.getSchumChiyuv()));
 				}
 
-				// tnuot golmi
 			});
+
+			AtomicReference<BigDecimal> sumNekudot = new AtomicReference(BigDecimal.ZERO);;
 
 			tnuotForNikud.forEach(tnuaForNikud -> {
 
 				BigDecimal tnuaAmt = isTashlumim(tnuaForNikud) ? tnuaForNikud.getSchumTnuaMekori()
 						: tnuaForNikud.getSchumChiyuv();
 
-				BigDecimal pointsForTnua=tnuaAmt.divide(rules.getYahasHamaraForTnua(tnuaForNikud, cardLevel));
-				
-				//TODO store in some table
-				
-			});
-			
-			cycle.setTotal(accumTotal);
-			
-			//cycle.setNekudot(???)
-			//card.le
+				BigDecimal pointsForTnua = tnuaAmt.divide(rules.getYahasHamaraForTnua(tnuaForNikud, cardLevel));
 
-			
+				cycle.addTnuaNikud(tnuaForNikud, pointsForTnua);
+
+				sumNekudot.set( sumNekudot.get().add(pointsForTnua));
+
+			});
+
+			cycle.setTotal(accumTotal.get());
+
+			cycle.setNekudot(sumNekudot.get());
+			// card.le
+
 		});
 
 	}
 
-	
-	
 	private boolean isFirstTashlum(Tnua tnua) {
 		// TODO Auto-generated method stub
 		return tnua.getMisTashlumNochechi().intValue() == 1;

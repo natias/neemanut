@@ -1,5 +1,6 @@
 package com.codev.accumilation.calculator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.codev.accumilation.model.Cycle;
@@ -13,7 +14,7 @@ public class CalculationContext {
 	
 	
 	
-	Map<Long, Cycle> openCycles;
+	Map<Long, Cycle> openCycles=new HashMap<Long, Cycle>();
 	
 	public Cycle gocCycle(long cardId) {
 		

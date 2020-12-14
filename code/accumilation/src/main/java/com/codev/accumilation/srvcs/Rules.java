@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.codev.accumilation.model.CardLevel;
 import com.codev.accumilation.model.Tnua;
 
+@Service
 public class Rules {
 
 	List<Integer> kodAnaftzover = new ArrayList<Integer>();
