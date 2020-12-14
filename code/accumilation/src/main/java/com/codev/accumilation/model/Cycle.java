@@ -1,12 +1,19 @@
 package com.codev.accumilation.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+
 /*
  * מחזור חיוב
+ * 
+ * 
+ * uniquely identfied by cardId and endDate
  */
+@Data
 public class Cycle {
 
 	public class TnuaNikud {
@@ -16,6 +23,11 @@ public class Cycle {
 	}
 
 	long id;
+	
+	
+	LocalDate endDate;
+	
+	long cardId;
 
 	List<Tnua> tnuot=new ArrayList<Tnua>();
 

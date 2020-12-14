@@ -84,7 +84,7 @@ public class Loader {
 
 				while (resultSet.next()) {
 					
-					System.out.println("line");
+					//System.out.println("line");
 
 					Tnua tnua = TnuaFac.fromResultSet(resultSet);
 

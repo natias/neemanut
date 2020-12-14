@@ -27,6 +27,10 @@ public class TnuaFac {
 
 		tnua.setMisTashlumNochechi(rs.getBigDecimal("MIS_TASHLUM_NOCHECHI"));
 
+		
+		tnua.setMisTashlumim(rs.getBigDecimal("MIS_TASHLUMIM"));
+		
+		
 		tnua.setShemAnaf(rs.getString("SHEM_ANAF"));
 
 		tnua.setKodMatbeaIsoMekori(rs.getBigDecimal("KOD_MATBEA_ISO_MEKORI"));

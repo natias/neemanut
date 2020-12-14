@@ -24,7 +24,7 @@ public class Rules {
 	
 	BigDecimal mekadem;
 
-	public void Rules() {
+	public  Rules() {
 		kodAnaftzover.add(1);
 
 		pointsLowerThreshold = new BigDecimal(4000);
@@ -77,6 +77,12 @@ public class Rules {
 		
 		
 		return null;
+	}
+
+	public boolean isMezaka(Number kodAnaf) {
+				
+		//return kodAnafZover().contains(kodAnaf);
+		return kodAnaf.intValue()>200;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.codev.accumilation.calculator;
 
 import java.lang.ref.Reference;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.codev.accumilation.model.Cycle;
 import com.codev.accumilation.model.Tnua;
 import com.codev.accumilation.srvcs.Accounts;
 import com.codev.accumilation.srvcs.Cards;
+import com.codev.accumilation.srvcs.Cycles;
 import com.codev.accumilation.srvcs.Rules;
 
 public class Calculator {
@@ -27,6 +29,10 @@ public class Calculator {
 	@Autowired
 	Accounts accounts;
 
+	@Autowired
+	Cycles cycles;
+
+	
 	@Autowired
 	Rules rules;
 
@@ -41,11 +47,11 @@ public class Calculator {
 //		Account acc = accounts.getAccountById(accid);
 
 //DB		
-		long cardId = cards.gocCardId( tnua.getMisKartisAshrai().longValue());
+		long cardId = cards.gocCardId(tnua.getMisKartisAshrai().longValue());
 
 		Card card = cards.getCardById(cardId);
 
-		Cycle cycle = context.gocCycle(cardId);
+		Cycle cycle = context.gocCycle(cardId,tnua.getTrChiyuv());
 
 		// tnua.getSchumChiyuv()
 
@@ -83,9 +89,14 @@ public class Calculator {
 
 			List<Tnua> tnuotForNikud = new ArrayList();
 
+			System.out.println("tnuot.size "+tnuot.size());
+
+			
 			tnuot.forEach(tnua -> {
 
 				if (isMezaka(tnua)) {
+					
+					System.out.println("is mezaka");
 
 					if (isTashlumim(tnua))
 
@@ -110,31 +121,53 @@ public class Calculator {
 
 					}
 
-
 				} else {
 					accumTotal.set(accumTotal.get().add(tnua.getSchumChiyuv()));
 				}
 
 			});
 
-			AtomicReference<BigDecimal> sumNekudot = new AtomicReference(BigDecimal.ZERO);;
+			System.out.println("tnuotForNikud.size "+tnuotForNikud.size());
+			
+			AtomicReference<BigDecimal> sumNekudot = new AtomicReference(BigDecimal.ZERO);
+			;
 
 			tnuotForNikud.forEach(tnuaForNikud -> {
 
 				BigDecimal tnuaAmt = isTashlumim(tnuaForNikud) ? tnuaForNikud.getSchumTnuaMekori()
 						: tnuaForNikud.getSchumChiyuv();
+				
+//				System.out.println(tnuaAmt);
 
-				BigDecimal pointsForTnua = tnuaAmt.divide(rules.getYahasHamaraForTnua(tnuaForNikud, cardLevel));
+				BigDecimal pointsForTnua = tnuaAmt.divide(rules.getYahasHamaraForTnua(tnuaForNikud, cardLevel),2,RoundingMode.HALF_UP);
 
 				cycle.addTnuaNikud(tnuaForNikud, pointsForTnua);
 
-				sumNekudot.set( sumNekudot.get().add(pointsForTnua));
+				sumNekudot.set(sumNekudot.get().add(pointsForTnua));
 
 			});
 
 			cycle.setTotal(accumTotal.get());
 
+			
+	//		System.out.println(sumNekudot.get());
 			cycle.setNekudot(sumNekudot.get());
+			
+			
+			
+			long cycid=cycles.storeCycle(cycle);
+			
+			
+			long cid=cycle.getCardId();
+			
+			
+			
+			Card card=cards.getCardById(cid);
+			
+			
+			
+			card.setCurrentCycleId(cycid);
+			
 			// card.le
 
 		});
@@ -153,7 +186,8 @@ public class Calculator {
 
 	boolean isMezaka(Tnua tnua) {
 
-		return rules.kodAnafZover().contains(tnua.getKodAnaf());
+		
+		return rules.isMezaka(tnua.getKodAnaf());
 
 	}
 
