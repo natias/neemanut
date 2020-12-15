@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codev.accumilation.load.TnuaFac;
@@ -36,8 +38,18 @@ public class Calculator {
 	@Autowired
 	Rules rules;
 
-	CalculationContext context = new CalculationContext();
+	final
+	CalculationContext context; 
 
+	
+	public Calculator(CalculationContext contextXX) {
+		// TODO Auto-generated constructor stub
+		this.context=contextXX;
+	}
+	/*
+	 * @PostConstruct void init() { context= new CalculationContext(cycles); }
+	 */
+	
 	public void putTnua(Tnua tnua) {
 
 //DB
@@ -51,11 +63,14 @@ public class Calculator {
 
 		Card card = cards.getCardById(cardId);
 
-		Cycle cycle = context.gocCycle(cardId,tnua.getTrChiyuv());
+		long cycle_id = 
+				context.
+				gocCycle(cardId,
+						tnua.getTrChiyuv());
 
 		// tnua.getSchumChiyuv()
 
-		cycle.addTnua(tnua);
+		cycles.getCycleById(cycle_id).addTnua(tnua);
 	}
 
 	boolean isTzover(Tnua tnua) {
@@ -73,8 +88,10 @@ public class Calculator {
 
 	public void end() {
 
-		context.getOpenCycles().forEach((cardNum, cycle) -> {
+		context.getOpenCycles().forEach((cardNum, cid) -> {
 
+			Cycle cycle=cycles.getCycleById(cid);
+			
 			List<Tnua> tnuot = cycle.getTnuot();
 
 			CardLevel cardLevel = cards.getCardById(cardNum).getCardLevel();
@@ -155,18 +172,18 @@ public class Calculator {
 			
 			
 			
-			long cycid=cycles.storeCycle(cycle);
+//			long cycid=cycles.storeCycle(cycle);
+//			
+//			
+			long cardid=cycle.getCardId();
+//			
 			
 			
-			long cid=cycle.getCardId();
+			Card card=cards.getCardById(cardid);
 			
 			
 			
-			Card card=cards.getCardById(cid);
-			
-			
-			
-			card.setCurrentCycleId(cycid);
+			card.getDailyCycles().add(cid);
 			
 			// card.le
 

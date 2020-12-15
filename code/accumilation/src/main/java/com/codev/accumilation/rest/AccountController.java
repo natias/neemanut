@@ -85,7 +85,7 @@ public class AccountController {
 			
 			cardResponseData.setMIS_KARTIS_ASHRAI_X(card.getMispar_ashrai_x_sfarot());
 
-			Cycle current_cycle=cycles.getCycleById(card.getCurrentCycleId());
+			Cycle current_cycle=cycles.getCycleById(card.getDailyCycles().get(card.getDailyCycles().size()-1));
 			
 			System.out.println("current_cycle"+current_cycle);
 			

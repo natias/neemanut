@@ -1,5 +1,6 @@
 package com.codev.accumilation.srvcs;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class Cycles {
 
 	Map<Long, Cycle> storage=new HashMap<Long, Cycle>();
 
-	public synchronized long storeCycle(Cycle cycle)
+	private synchronized long storeCycle(Cycle cycle)
 
 	{
 		long id=counter++;
@@ -33,6 +34,21 @@ public class Cycles {
 		
 	}
 	
+	
+	public long createEmptyCycle(long card_id,LocalDate endDate)
+	{
+		
+		Cycle cycle=new Cycle();
+		
+		cycle.setCardId(card_id);
+		
+		cycle.setEndDate(endDate);
+		
+		return storeCycle(cycle);
+		
+		
+		//throw new RuntimeException("not implemented");
+	}
 	
 	
 	

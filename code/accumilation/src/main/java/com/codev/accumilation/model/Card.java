@@ -40,22 +40,29 @@ public class Card {
 	
 	public CardLevel getCardLevel() {
 		
-		if(historicalCycleIds.isEmpty())
+		if(monthlyCycles.isEmpty())
 		{
 			return CardLevel.P0;
 		}
 		else
 		{
 		
-			return rules.levelFor(cycles.getCycleById(historicalCycleIds.get(historicalCycleIds.size()-1)).getTotalSchum())
+			return rules.levelFor(cycles.getCycleById(monthlyCycles.get(monthlyCycles.size()-1)).getTotalSchum())
 			;
 			
 		}
 	}
 	
-	List<Long> historicalCycleIds=new ArrayList<Long>();
 	
-	Long currentCycleId;
+	//each mahazor hiuv id will be stored here
+	List<Long> monthlyCycles=new ArrayList<Long>();
+	
+	
+	//each day calculation will be stored here
+	List<Long> dailyCycles=new ArrayList<Long>();
+	
+	
+	//Long currentCycleId;
 
 	
 	

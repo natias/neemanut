@@ -25,7 +25,9 @@ public class Cycle {
 	long id;
 	
 	
-	LocalDate endDate;
+	private LocalDate endDate;
+	
+	
 	
 	long cardId;
 
