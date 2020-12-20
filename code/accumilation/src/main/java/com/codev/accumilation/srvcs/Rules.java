@@ -2,15 +2,36 @@ package com.codev.accumilation.srvcs;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.codev.accumilation.configs.RulesConfig;
 import com.codev.accumilation.model.CardLevel;
 import com.codev.accumilation.model.Tnua;
 
+import lombok.Data;
+
 @Service
 public class Rules {
+
+//	@Data
+//	public static class YahasHamara{
+//		
+//		CardLevel cl;
+//		String mcc;
+//		BigDecimal yahasAhamara;
+//		
+//		}
+//	
+
+	@Autowired
+	RulesConfig rulesConfig;
 
 	List<Integer> kodAnaftzover = new ArrayList<Integer>();
 
@@ -18,20 +39,75 @@ public class Rules {
 
 	BigDecimal pointsMaxThreshold;
 
-	
-	//BigDecimal 
-	
-	
+	// BigDecimal
+
 	BigDecimal mekadem;
 
-	public  Rules() {
-		kodAnaftzover.add(1);
+	Map<CardLevel, Map<String, BigDecimal>> yahasiHamara;
 
-		pointsLowerThreshold = new BigDecimal(4000);
+	
+	Map<Integer,String> kodeiAnafTomcc; 
 
-		pointsMaxThreshold = new BigDecimal(25000);
+	@PostConstruct
+	void init() {
 
-		mekadem = new BigDecimal(0.95);
+		yahasiHamara=new HashMap<CardLevel, Map<String,BigDecimal>>();
+		
+		rulesConfig.getYahasiHamara().forEach((cl, mcc_cr) -> {
+
+			Map<String, BigDecimal> level_rates_per_mcc=new HashMap();
+			yahasiHamara.put(CardLevel.valueOf(cl), level_rates_per_mcc);
+			
+			mcc_cr.forEach((mcc,cr)->{
+				
+				
+				level_rates_per_mcc.put(mcc, new BigDecimal(cr));
+				
+			});
+			
+			
+			
+			
+		});
+		
+		
+		kodeiAnafTomcc=new HashMap();
+		
+		rulesConfig.getMccs().forEach((mcc,list_of_kodei_anaf) -> {
+			
+			
+			
+			list_of_kodei_anaf.forEach(ka -> {
+				
+				kodeiAnafTomcc.put(ka, mcc);
+			});
+			
+			
+			
+			
+		}); 
+		
+		
+		this.mekadem=rulesConfig.getMekadem_klalii();
+				
+				
+		System.out.println(this.kodeiAnafTomcc);
+		System.out.println(this.yahasiHamara);
+		System.out.println(this.mekadem);
+		
+		
+		
+
+	}
+
+	public Rules() {
+//		kodAnaftzover.add(1);
+//
+//		pointsLowerThreshold = new BigDecimal(4000);
+//
+//		pointsMaxThreshold = new BigDecimal(25000);
+//
+//		mekadem = new BigDecimal(0.95);
 
 	}
 
@@ -51,38 +127,57 @@ public class Rules {
 		return mekadem;
 	}
 
-	
-	public BigDecimal getYahasHamaraForTnua(Tnua tnua,CardLevel cl) {
+	public BigDecimal getYahasHamaraForTnua(Tnua tnua, CardLevel cl) {
 
-		return getYahasHamaraBeforeMekadem(tnua.getKodMatbeaIsoMekori().intValue()!=376,cl).multiply(getMekadem());
+		return getYahasHamaraBeforeMekadem(
+				cl, 
+				getMccFromTnua(tnua)).
+				multiply(getMekadem());
 	}
-	
-	
 
-	private BigDecimal getYahasHamaraBeforeMekadem(boolean isChul,CardLevel cl) {
-		switch (cl) {
-		case P0:
+	private String  getMccFromTnua(Tnua tnua) {
+		
+		if(tnua.getKodMatbeaIsoMekori().intValue()!=376)
+		
+		return "tnuatChul";
+		
+//		if(tnua.getKodAnaf())
+		
+		
+		String r = kodeiAnafTomcc.get(tnua.getKodAnaf());
+		
+		if(r==null)
+			r="DEFAULT";
+		return r;
+	}
+
+	private BigDecimal getYahasHamaraBeforeMekadem( CardLevel cl,String mcc) {
+		
+			Map<String, BigDecimal> cardLevel=yahasiHamara.get(cl);
 			
-			return isChul? BigDecimal.valueOf(100):BigDecimal.valueOf(200);
-
-		default:
-			return BigDecimal.valueOf(1);
-		// break;
-		}
+			if(null==cardLevel)
+				throw new IllegalStateException();
+			
+			
+						
+			BigDecimal r=cardLevel.get(mcc);
+			
+			if(r==null)
+			{
+				System.out.println(cl +" ");
+			}
+			return r;
 	}
 
 	public CardLevel levelFor(BigDecimal totalSchum) {
-		
-		
-		
-		
+
 		return null;
 	}
 
 	public boolean isMezaka(Number kodAnaf) {
-				
-		//return kodAnafZover().contains(kodAnaf);
-		return kodAnaf.intValue()>200;
+
+		// return kodAnafZover().contains(kodAnaf);
+		return kodAnaf.intValue() > 200;
 	}
 
 }

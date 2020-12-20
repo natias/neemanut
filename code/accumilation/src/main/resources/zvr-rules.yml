@@ -1,0 +1,27 @@
+---
+mekadem_klalii: 1
+yahasiHamara:
+  PLUS:
+    mcc_cat_2: "24"
+    mcc_cat_1: "23"
+    tnuatChul: "46"
+    DEFAULT: "77"
+  PRIORITY:
+    mcc_cat_2: "14"
+    mcc_cat_1: "13"
+    tnuatChul: "36"
+    DEFAULT: "7"
+  PREMIUM:
+    mcc_cat_2: "4"
+    mcc_cat_1: "3"
+    tnuatChul: "26"
+    DEFAULT: "7"
+mccs:
+  mcc_cat_2:
+  - 4
+  - 5
+  - 6
+  mcc_cat_1:
+  - 1
+  - 2
+  - 3

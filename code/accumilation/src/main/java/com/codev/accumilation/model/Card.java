@@ -42,7 +42,7 @@ public class Card {
 		
 		if(monthlyCycles.isEmpty())
 		{
-			return CardLevel.P0;
+			return CardLevel.PLUS;
 		}
 		else
 		{
